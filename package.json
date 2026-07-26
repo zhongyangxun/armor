@@ -4,8 +4,6 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "tsup src/index.ts --watch",
-		"build": "tsup src/index.ts",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prepare": "husky"
 	},
@@ -26,11 +24,6 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^17.1.0",
 		"prettier": "^3.9.5",
-		"tsup": "^8.5.1",
 		"typescript": "^7.0.2"
-	},
-	"_comment_overrrides": "临时钉 esbuild, 清 GHSA-g7r4-m6w7-qqqr; tsup 支持 0.28+ 后可删",
-	"overrides": {
-		"esbuild": "0.28.1"
 	}
 }
