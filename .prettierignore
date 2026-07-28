@@ -1,11 +1,3 @@
-# Biome 已负责的，交给 Biome
-*.js
-*.jsx
-*.ts
-*.tsx
-*.json
-*.css
-
 # 依赖与产物
 node_modules
 dist
