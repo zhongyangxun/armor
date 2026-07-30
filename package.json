@@ -6,16 +6,12 @@
   "scripts": {
     "dev": "node --watch src/cli.ts",
     "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky"
   },
   "bin": {
     "armor": "src/cli.ts"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,yml,yaml,md}": [
-      "prettier --write"
-    ]
   },
   "keywords": [],
   "type": "module",
