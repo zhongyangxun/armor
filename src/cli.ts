@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 
-import { access, cp } from 'node:fs/promises'
+import { cp } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { logger } from './logger.ts'
-
-const checkFileExists = async (file: string) => {
-  const exists = await access(file)
-    .then(() => true)
-    .catch(() => false)
-  return exists
-}
+import { checkFileExists } from './lib.ts'
+import {
+  detectPackageManager,
+  getPackageJSON,
+  installDependencies,
+} from './deps.ts'
 
 const cpGitHubActions = async (workflows: string[]) => {
   logger.start('Copying GitHub Actions workflows')
@@ -65,8 +64,44 @@ const cpGitHooks = async (hooks: string[]) => {
   logger.success('Copying commit hooks completed')
 }
 
+const installGitHooksDevDeps = async () => {
+  const gitHooksDevDeps = [
+    'husky',
+    'lint-staged',
+    '@commitlint/cli',
+    '@commitlint/config-conventional',
+  ]
+
+  const packageJSON = (await getPackageJSON()) ?? {}
+  const devDeps = new Set(
+    packageJSON.devDependencies ? Object.keys(packageJSON.devDependencies) : [],
+  )
+
+  // *still try to install when there is no package.json, maybe need to optimize later
+  const missingDevDeps = gitHooksDevDeps.filter((dep) => !devDeps.has(dep))
+
+  if (missingDevDeps.length === 0) {
+    logger.info('No missing development dependencies found')
+    return
+  }
+
+  try {
+    logger.start('Installing Git hooks development dependencies')
+    const packageManager = await detectPackageManager()
+    await installDependencies(packageManager, missingDevDeps)
+    logger.success('Installing Git hooks development dependencies completed')
+  } catch (error) {
+    logger.error(
+      `Installing Git hooks development dependencies failed: ${error}`,
+    )
+    process.exit(1)
+  }
+}
+
 const hooks = ['commit-msg', 'pre-commit']
 const workflows = ['commitlint.yml', 'ggshield.yml']
 
 await cpGitHubActions(workflows)
+
 await cpGitHooks(hooks)
+await installGitHooksDevDeps()
