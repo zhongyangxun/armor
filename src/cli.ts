@@ -2,7 +2,7 @@
 
 import { access, cp } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import consola from 'consola'
+import { logger } from './logger.ts'
 
 const workflows = ['commitlint.yml', 'ggshield.yml']
 
@@ -14,7 +14,7 @@ const checkFileExists = async (file: string) => {
 }
 
 const cpGitHubActions = async () => {
-  consola.start('Copying GitHub Actions workflows')
+  logger.start('Copying GitHub Actions workflows')
 
   const source = resolve(import.meta.dirname, '..', '.github/workflows')
   const destination = resolve(process.cwd(), '.github/workflows')
@@ -24,20 +24,20 @@ const cpGitHubActions = async () => {
       try {
         const exists = await checkFileExists(resolve(destination, workflow))
         if (exists) {
-          consola.info(`skip ${workflow} (already exists)`)
+          logger.info(`skip ${workflow} (already exists)`)
         } else {
-          consola.info(`copy ${workflow}`)
+          logger.info(`copy ${workflow}`)
           await cp(resolve(source, workflow), resolve(destination, workflow))
-          consola.success(`copy ${workflow} completed`)
+          logger.success(`copy ${workflow} completed`)
         }
       } catch (error) {
-        consola.error(`copy ${workflow} failed: ${error}`)
+        logger.error(`copy ${workflow} failed: ${error}`)
         process.exit(1)
       }
     }),
   )
 
-  consola.success('Copying GitHub Actions workflows completed')
+  logger.success('Copying GitHub Actions workflows completed')
 }
 
 cpGitHubActions()
