@@ -1,21 +1,28 @@
-import { parseArgs, type ParseArgsOptionsConfig } from 'node:util'
+import { parseArgs, type ParseArgsOptionDescriptor } from 'node:util'
 import { logger } from './logger.ts'
 
-const options = {
-  overwrite: {
-    type: 'boolean',
-    default: false,
-  },
-  'skip-install': {
-    type: 'boolean',
-    default: false,
-  },
+export type OptionDescriptor = ParseArgsOptionDescriptor & {
+  description: string
+}
+
+export const options = {
   help: {
     type: 'boolean',
     short: 'h',
     default: false,
+    description: 'Show help message',
   },
-} satisfies ParseArgsOptionsConfig
+  overwrite: {
+    type: 'boolean',
+    default: false,
+    description: 'Overwrite existing files',
+  },
+  'skip-install': {
+    type: 'boolean',
+    default: false,
+    description: 'Skip installing Git hooks dev dependencies',
+  },
+} satisfies Record<string, OptionDescriptor>
 
 export const parseOptions = () => {
   try {
