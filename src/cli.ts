@@ -73,12 +73,13 @@ const installGitHooksDevDeps = async () => {
   ]
 
   const packageJSON = (await getPackageJSON()) ?? {}
-  const devDeps = new Set(
-    packageJSON.devDependencies ? Object.keys(packageJSON.devDependencies) : [],
-  )
+  const installedDeps = {
+    ...(packageJSON.devDependencies ?? {}),
+    ...(packageJSON.dependencies ?? {}),
+  }
 
   // *still try to install when there is no package.json, maybe need to optimize later
-  const missingDevDeps = gitHooksDevDeps.filter((dep) => !devDeps.has(dep))
+  const missingDevDeps = gitHooksDevDeps.filter((dep) => !installedDeps[dep])
 
   if (missingDevDeps.length === 0) {
     logger.info('No missing development dependencies found')
