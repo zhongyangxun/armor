@@ -2,7 +2,6 @@
 
 import { resolve } from 'node:path'
 import { logger } from './logger.ts'
-import { parseArgs, type ParseArgsOptionsConfig } from 'node:util'
 import {
   detectPackageManager,
   getPackageJSON,
@@ -10,32 +9,9 @@ import {
 } from './deps.ts'
 import { copyFiles } from './cp.ts'
 import { printHelp } from './help.ts'
+import { parseOptions } from './options.ts'
 
-const options = {
-  overwrite: {
-    type: 'boolean',
-    default: false,
-  },
-  'skip-install': {
-    type: 'boolean',
-    default: false,
-  },
-  help: {
-    type: 'boolean',
-    short: 'h',
-    default: false,
-  },
-} satisfies ParseArgsOptionsConfig
-
-let values
-try {
-  const parsed = parseArgs({ options })
-  values = parsed.values
-} catch (error) {
-  logger.error(`${(error as Error).message}`)
-  logger.info('Run `armor --help` or `armor -h` for usage.')
-  process.exit(1)
-}
+const values = parseOptions()
 
 const { overwrite, 'skip-install': skipInstall, help } = values
 
