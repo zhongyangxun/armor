@@ -16,10 +16,14 @@ const { values } = parseArgs({
       type: 'boolean',
       default: false,
     },
+    'skip-install': {
+      type: 'boolean',
+      default: false,
+    },
   },
 })
 
-const { overwrite } = values
+const { overwrite, 'skip-install': skipInstall } = values
 
 const cpGitHubActions = async ({
   workflows,
@@ -88,15 +92,23 @@ const installGitHooksDevDeps = async () => {
   }
 
   try {
-    logger.start('Installing Git hooks development dependencies')
     const packageManager = await detectPackageManager()
     await installDependencies(packageManager, missingDevDeps)
-    logger.success('Installing Git hooks development dependencies completed')
   } catch (error) {
     logger.error(
       `Installing Git hooks development dependencies failed: ${error}`,
     )
     process.exit(1)
+  }
+}
+
+const processDeps = async ({ skipInstall }: { skipInstall: boolean }) => {
+  if (!skipInstall) {
+    logger.start('Installing Git hooks development dependencies')
+    await installGitHooksDevDeps()
+    logger.success('Installing Git hooks development dependencies completed')
+  } else {
+    logger.info('Skipping Git hooks development dependencies installation')
   }
 }
 
@@ -106,4 +118,5 @@ const workflows = ['commitlint.yml', 'ggshield.yml']
 await cpGitHubActions({ workflows, overwrite })
 
 await cpGitHooks({ hooks, overwrite })
-await installGitHooksDevDeps()
+
+await processDeps({ skipInstall })
