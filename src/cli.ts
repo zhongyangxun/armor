@@ -112,11 +112,18 @@ const processDeps = async ({ skipInstall }: { skipInstall: boolean }) => {
   }
 }
 
-const hooks = ['commit-msg', 'pre-commit']
-const workflows = ['commitlint.yml', 'ggshield.yml']
+const main = async () => {
+  const hooks = ['commit-msg', 'pre-commit']
+  const workflows = ['commitlint.yml', 'ggshield.yml']
 
-await cpGitHubActions({ workflows, overwrite })
+  try {
+    await cpGitHubActions({ workflows, overwrite })
+    await cpGitHooks({ hooks, overwrite })
+    await processDeps({ skipInstall })
+  } catch (error) {
+    logger.error(`Armor failed: ${error}`)
+    process.exit(1)
+  }
+}
 
-await cpGitHooks({ hooks, overwrite })
-
-await processDeps({ skipInstall })
+main()
