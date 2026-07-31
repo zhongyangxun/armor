@@ -9,6 +9,7 @@ import {
   installDependencies,
 } from './deps.ts'
 import { copyFiles } from './cp.ts'
+import { printHelp } from './help.ts'
 
 const { values } = parseArgs({
   options: {
@@ -20,10 +21,20 @@ const { values } = parseArgs({
       type: 'boolean',
       default: false,
     },
+    help: {
+      type: 'boolean',
+      short: 'h',
+      default: false,
+    },
   },
 })
 
-const { overwrite, 'skip-install': skipInstall } = values
+const { overwrite, 'skip-install': skipInstall, help } = values
+
+if (help) {
+  printHelp()
+  process.exit(0)
+}
 
 const cpGitHubActions = async ({
   workflows,
