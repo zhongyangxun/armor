@@ -8,7 +8,8 @@
     "skipLibCheck": true,
     "types": ["node"],
     "erasableSyntaxOnly": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noUnusedLocals": true
   },
   "include": ["src"]
 }

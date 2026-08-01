@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 import { resolve } from 'node:path'
-import { logger } from './logger.ts'
+
+import { copyFiles } from './cp.ts'
 import {
   detectPackageManager,
   getPackageJSON,
   installDependencies,
 } from './deps.ts'
-import { copyFiles } from './cp.ts'
 import { printHelp } from './help.ts'
+import { logger } from './logger.ts'
 import { parseOptions } from './options.ts'
 
 const values = parseOptions()
@@ -90,9 +91,7 @@ const installGitHooksDevDeps = async () => {
     const packageManager = await detectPackageManager()
     await installDependencies(packageManager, missingDevDeps)
   } catch (error) {
-    logger.error(
-      `Installing Git hooks development dependencies failed: ${error}`,
-    )
+    logger.error('Installing Git hooks development dependencies failed', error)
     process.exit(1)
   }
 }
@@ -116,9 +115,9 @@ const main = async () => {
     await cpGitHooks({ hooks, overwrite })
     await processDeps({ skipInstall })
   } catch (error) {
-    logger.error(`Armor failed: ${error}`)
+    logger.error('Armor failed', error)
     process.exit(1)
   }
 }
 
-main()
+await main()

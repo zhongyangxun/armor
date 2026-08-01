@@ -1,4 +1,4 @@
-import { options, type OptionDescriptor } from './options.ts'
+import { type OptionDescriptor, options } from './options.ts'
 
 const getOptionsDescription = () => {
   const entries = Object.entries(options) as [string, OptionDescriptor][]

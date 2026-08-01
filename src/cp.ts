@@ -1,5 +1,6 @@
-import { resolve } from 'node:path'
 import { cp } from 'node:fs/promises'
+import { resolve } from 'node:path'
+
 import { checkFileExists } from './lib.ts'
 import { logger } from './logger.ts'
 
@@ -28,7 +29,7 @@ export const copyFiles = async ({
           )
         }
       } catch (error) {
-        logger.error(`copy ${file} failed: ${error}`)
+        logger.error(`copy ${file} failed`, error)
         process.exit(1)
       }
     }),

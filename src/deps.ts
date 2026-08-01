@@ -1,11 +1,17 @@
-import { checkFileExists } from './lib.ts'
 import { spawn } from 'node:child_process'
-import { resolve } from 'node:path'
 import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
+
+import { checkFileExists } from './lib.ts'
 import { logger } from './logger.ts'
 
 type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm'
 type InstallCommand = 'add' | 'install'
+
+type PackageJSON = {
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+}
 
 const packageLockFileMap = new Map<string, PackageManager>([
   ['pnpm-lock.yaml', 'pnpm'],
@@ -32,7 +38,7 @@ export const detectPackageManager = async (): Promise<PackageManager> => {
   return 'npm'
 }
 
-export const getPackageJSON = async (): Promise<Record<string, any> | null> => {
+export const getPackageJSON = async (): Promise<PackageJSON | null> => {
   const filePath = resolve(process.cwd(), 'package.json')
 
   // if package.json not found, still run the code and return null
@@ -43,10 +49,10 @@ export const getPackageJSON = async (): Promise<Record<string, any> | null> => {
 
   try {
     const packageJSON = await readFile(filePath, 'utf8')
-    const packageJSONObj = JSON.parse(packageJSON)
+    const packageJSONObj = JSON.parse(packageJSON) as PackageJSON
     return packageJSONObj
   } catch (error) {
-    logger.error(`Failed to parse package.json: ${error}`)
+    logger.error('Failed to parse package.json', error)
     process.exit(1)
   }
 }
