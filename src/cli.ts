@@ -11,13 +11,19 @@ import {
 import { printHelp } from './help.ts'
 import { logger } from './logger.ts'
 import { parseOptions } from './options.ts'
+import { getVersion } from './version.ts'
 
 const values = parseOptions()
 
-const { overwrite, 'skip-install': skipInstall, help } = values
+const { overwrite, 'skip-install': skipInstall, help, version } = values
 
 if (help) {
   printHelp()
+  process.exit(0)
+}
+
+if (version) {
+  console.log(getVersion())
   process.exit(0)
 }
 

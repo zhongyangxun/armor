@@ -23,6 +23,12 @@ export const options = {
     default: false,
     description: 'Skip installing Git hooks dev dependencies',
   },
+  version: {
+    type: 'boolean',
+    short: 'v',
+    default: false,
+    description: 'Show version',
+  },
 } satisfies Record<string, OptionDescriptor>
 
 export const parseOptions = () => {
