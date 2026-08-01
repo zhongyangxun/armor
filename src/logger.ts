@@ -1,10 +1,12 @@
 import chalk from 'chalk'
 
+import { stringifyUnknown } from './lib.ts'
+
 type logger = {
   start: (message: string) => void
   success: (message: string) => void
   info: (message: string) => void
-  error: (message: string) => void
+  error: (message: string, cause?: unknown) => void
 }
 
 const loggerIcons = {
@@ -24,7 +26,10 @@ export const logger: logger = {
   info: (message: string) => {
     console.log(chalk.blue(`${loggerIcons.info} ${message}`))
   },
-  error: (message: string) => {
-    console.log(chalk.red(`${loggerIcons.error} ${message}`))
+  error: (message: string, cause?: unknown) => {
+    const detail = stringifyUnknown(cause)
+
+    const text = detail ? `${message}: ${detail}` : message
+    console.log(chalk.red(`${loggerIcons.error} ${text}`))
   },
 }

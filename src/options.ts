@@ -1,4 +1,5 @@
 import { parseArgs, type ParseArgsOptionDescriptor } from 'node:util'
+
 import { logger } from './logger.ts'
 
 export type OptionDescriptor = ParseArgsOptionDescriptor & {
