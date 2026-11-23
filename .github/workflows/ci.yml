@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  type-check:
+  lint:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,5 +28,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Type check
-        run: npm run type-check
+      - name: Lint
+        run: npm run lint

@@ -1,0 +1,41 @@
+name: commitlint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# 同一 PR 多次 push 时取消旧 run，节省 Actions 用量。
+concurrency:
+  group: commitlint-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # commitlint --from/--to 需要完整历史才能正确解析提交范围。
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate PR commits
+        if: github.event_name == 'pull_request'
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+      - name: Validate push commits
+        if: github.event_name == 'push'
+        run: npx commitlint --from ${{ github.event.before }} --to ${{ github.event.after }} --verbose
